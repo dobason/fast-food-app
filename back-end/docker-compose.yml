@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/users
+    command: ["node", "server.js"]
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "5002:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/products
+    command: ["node", "server.js"]
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "5003:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/orders
+    command: ["node", "server.js"]
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "5004:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/payments
+    command: ["node", "server.js"]
+
+volumes:
+  mongo_data:
