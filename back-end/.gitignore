@@ -1,0 +1,28 @@
+# Bỏ qua node_modules của tất cả services
+node_modules/
+*/node_modules/
+
+# Các file môi trường của từng service
+.env
+*/.env
+
+# Logs
+*.log
+logs/
+*/logs/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Build
+dist/
+build/
+*/dist/
+*/build/
+
+# VSCode / hệ thống
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
