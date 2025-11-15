@@ -1,4 +1,3 @@
-# A HUY TẾU 
 # 🍔 Fast Food Microservices Project
 
 ## 📌 Overview
