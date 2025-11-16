@@ -1,12 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerOptions = require('./swagger');
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 const paymentRoutes = require('./src/routes/paymentRoutes');
 
 const app = express();
 app.use(express.json());
 
+// Swagger UI route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Kết nối MongoDB
-mongoose.connect('mongodb://mongodb:27017/payments')
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('✅ Connected to MongoDB - Payment Service'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
@@ -18,4 +25,4 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(5000, () => console.log('🚀 Payment Service running on port 5000'));
+app.listen(process.env.PORT, () => console.log(`🚀 Payment Service running on port ${process.env.PORT}`));

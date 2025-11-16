@@ -1,4 +1,4 @@
-const Product = require('../models/product'); //Mongoose model sản phẩm
+const Product = require('../models/Product'); //Mongoose model sản phẩm
 
 //Tạo sản phẩm mới
 exports.createProduct = async (req, res) => {

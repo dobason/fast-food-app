@@ -1,14 +1,24 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerOptions = require('./swagger');
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 const app = express();
+
 app.use(express.json());
+
+// Swagger UI route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Import route từ thư mục src/routes
 const userRoutes = require("./src/routes/userRoutes")
 
 // Kết nối MongoDB
-mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/users")
+mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("✅ Connected to MongoDB - User Service"))
     .catch(err => console.error("❌ MongoDB connection error:", err));
 
@@ -21,6 +31,6 @@ app.get("/", (req, res) => {
 });
 
 // Chạy server
-app.listen(5001, () => {
-    console.log("🚀 User Service running on port 5001");
+app.listen(process.env.PORT, () => {
+    console.log(`🚀 User Service running on port ${process.env.PORT}`);
 });

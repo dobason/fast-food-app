@@ -1,15 +1,16 @@
-const Payment = require('./src/models/Payment');
+const Payment = require('../models/Payment');
 
 exports.processPayment = async (req, res) => {
   try {
-    const { orderId, userId, amount } = req.body;
-    if (!orderId || !userId || !amount)
+    const { orderId, userId, amount, transactionId } = req.body;
+    if (!orderId || !userId || !amount || !transactionId)
       return res.status(400).json({ message: "Missing fields" });
 
     // Giả lập thanh toán ngẫu nhiên
     const isSuccess = Math.random() > 0.3;
 
     const payment = new Payment({
+      transactionId,
       orderId,
       userId,
       amount,

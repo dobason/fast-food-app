@@ -16,20 +16,20 @@ services:
       - "5001:5001"
     depends_on:
       - mongodb
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/users
-    command: ["node", "server.js"]
+    env_file:
+      - ./user-service/.env
+    command: ["sh", "./start.sh"]
 
   product-service:
     build: ./product-service
     container_name: product-service
     ports:
-      - "5002:5000"
+      - "5002:5002"
     depends_on:
       - mongodb
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017/products
-    command: ["node", "server.js"]
+    env_file:
+      - ./product-service/.env
+    command: ["sh", "./start.sh"]
 
   order-service:
     build: ./order-service
@@ -40,20 +40,20 @@ services:
       - mongodb
       - payment-service
       - product-service
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017/orders
-    command: ["node", "server.js"]
+    env_file:
+      - ./order-service/.env
+    command: ["sh", "./start.sh"]
 
   payment-service:
     build: ./payment-service
     container_name: payment-service
     ports:
-      - "5004:5000"
+      - "5004:5004"
     depends_on:
       - mongodb
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017/payments
-    command: ["node", "server.js"]
+    env_file:
+      - ./payment-service/.env
+    command: ["sh", "./start.sh"]
 
 
 volumes:
