@@ -11,14 +11,14 @@ mongoose.connect(process.env.MONGO_URL)
       {
         name: 'Admin User',
         email: 'admin@example.com',
-        password: 'admin123', // In production, hash passwords!
+        password: 'admin123', // Will be hashed below
         role: 'admin',
         phone: '0123456789',
         address: '123 Admin St',
         isActive: true
       },
       {
-        name: 'Normal User',
+        name: 'Regular User',
         email: 'user@example.com',
         password: 'user123',
         role: 'user',
@@ -33,9 +33,24 @@ mongoose.connect(process.env.MONGO_URL)
         role: 'merchant',
         phone: '0111222333',
         address: '789 Merchant Rd',
-        storeName: 'Merchant Store',
-        storeDescription: 'Best merchant store',
-        storeLocation: 'District 1',
+        isActive: true
+      },
+      {
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: 'john123',
+        role: 'user',
+        phone: '0222333444',
+        address: '321 Main St',
+        isActive: true
+      },
+      {
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        password: 'jane123',
+        role: 'user',
+        phone: '0333444555',
+        address: '654 Oak Ave',
         isActive: true
       }
     ];

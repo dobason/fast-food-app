@@ -7,29 +7,60 @@ mongoose.connect(process.env.MONGO_URL)
 
     const sample = [
       {
+        orderId: 'ORD001',
         userId: 'user1',
-        products: [
-          { productId: 'product1', quantity: 2 },
-          { productId: 'product2', quantity: 1 }
-        ],
         total: 170000,
-        status: 'completed',
-        address: '123 Main St'
+        status: 'delivered',
+        storeName: 'Fast Food Store',
+        dest_lat: 10.762622,
+        dest_lng: 106.660172,
+        dest_location: '123 Nguyen Hue St, District 1, Ho Chi Minh City'
       },
       {
+        orderId: 'ORD002',
         userId: 'user2',
-        products: [
-          { productId: 'product3', quantity: 1 }
-        ],
         total: 50000,
         status: 'pending',
-        address: '456 Second St'
+        storeName: 'Pizza Palace',
+        dest_lat: 10.772622,
+        dest_lng: 106.670172,
+        dest_location: '456 Le Loi St, District 1, Ho Chi Minh City'
+      },
+      {
+        orderId: 'ORD003',
+        userId: 'user1',
+        total: 85000,
+        status: 'processing',
+        storeName: 'Burger King',
+        dest_lat: 10.782622,
+        dest_lng: 106.680172,
+        dest_location: '789 Tran Hung Dao St, District 5, Ho Chi Minh City'
+      },
+      {
+        orderId: 'ORD004',
+        userId: 'user3',
+        total: 120000,
+        status: 'shipped',
+        storeName: 'KFC',
+        dest_lat: 10.792622,
+        dest_lng: 106.690172,
+        dest_location: '321 Vo Van Tan St, District 3, Ho Chi Minh City'
+      },
+      {
+        orderId: 'ORD005',
+        userId: 'user2',
+        total: 45000,
+        status: 'cancelled',
+        storeName: 'McDonald\'s',
+        dest_lat: 10.802622,
+        dest_lng: 106.700172,
+        dest_location: '555 Hai Ba Trung St, District 3, Ho Chi Minh City'
       }
     ];
 
     for (const item of sample) {
       await Order.updateOne(
-        { userId: item.userId, total: item.total },
+        { orderId: item.orderId },
         { $set: item },
         { upsert: true }
       );
