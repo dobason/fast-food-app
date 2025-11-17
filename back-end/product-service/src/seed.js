@@ -15,6 +15,14 @@ mongoose.connect(process.env.MONGO_URL)
         images: ['burger.jpg']
       },
       {
+        name: 'Burger',
+        price: 50000,
+        quantity: 10,
+        category: 'Fast Food',
+        description: 'Burger bò Mỹ',
+        images: ['burger.jpg']
+      },
+      {
         name: 'Pizza',
         price: 120000,
         quantity: 8,
