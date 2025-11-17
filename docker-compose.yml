@@ -1,0 +1,143 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: ./back-end/user-service
+    container_name: user-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./back-end/user-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/user-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+  product-service:
+    build:
+      context: ./back-end/product-service
+    container_name: product-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./back-end/product-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/product-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+  order-service:
+    build:
+      context: ./back-end/order-service
+    container_name: order-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./back-end/order-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/order-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+  payment-service:
+    build:
+      context: ./back-end/payment-service
+    container_name: payment-service
+    ports:
+      - "5004:5004"
+    volumes:
+      - ./back-end/payment-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/payment-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+  foody-web:
+    build:
+      context: ./front-end/foody-web
+    container_name: foody-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front-end/foody-web:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    env_file:
+      - ./front-end/foody-web/.env
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+      - payment-service
+    command: ["npm", "run", "dev"]
+    networks:
+      - app-network
+
+  foody-admin:
+    build:
+      context: ./front-end/foody-admin
+    container_name: foody-admin
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./front-end/foody-admin:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    env_file:
+      - ./front-end/foody-admin/.env
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+      - payment-service
+    command: ["npm", "run", "dev"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
