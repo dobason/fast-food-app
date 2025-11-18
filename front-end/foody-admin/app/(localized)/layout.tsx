@@ -27,6 +27,7 @@ import './global.css';
 
 // Apollo
 import { useSetupApollo } from '@/lib/hooks/useSetApollo';
+import { QueryProvider } from '@/lib/providers/QueryProvider';
 
 export default function RootLayout({
   children,
@@ -48,19 +49,21 @@ export default function RootLayout({
         <FontawesomeConfig />
       </head>
       <body className={'flex flex-col flex-wrap'}>
-        <PrimeReactProvider value={value}>
-          <ApolloProvider client={client}>
-            <ConfigurationProvider>
-              <LayoutProvider>
-                <UserProvider>
-                  <SidebarProvider>
-                    <ToastProvider>{children}</ToastProvider>
-                  </SidebarProvider>
-                </UserProvider>
-              </LayoutProvider>
-            </ConfigurationProvider>
-          </ApolloProvider>
-        </PrimeReactProvider>
+        <QueryProvider>
+          <PrimeReactProvider value={value}>
+            <ApolloProvider client={client}>
+              <ConfigurationProvider>
+                <LayoutProvider>
+                  <UserProvider>
+                    <SidebarProvider>
+                      <ToastProvider>{children}</ToastProvider>
+                    </SidebarProvider>
+                  </UserProvider>
+                </LayoutProvider>
+              </ConfigurationProvider>
+            </ApolloProvider>
+          </PrimeReactProvider>
+        </QueryProvider>
       </body>
     </html>
   );

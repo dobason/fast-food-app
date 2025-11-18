@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
 // Interfaces
-import { IPhoneTextFieldProps } from "@/lib/utils/interfaces";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import { IPhoneTextFieldProps } from '@/lib/utils/interfaces';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 // Hooks
-import { useState } from "react";
+import { useState } from 'react';
 
 // Components & Skeletons
-import InputSkeleton from "../custom-skeletons/inputfield.skeleton";
+import InputSkeleton from '../custom-skeletons/inputfield.skeleton';
 
 export default function CustomPhoneTextField({
   className,
   style,
   showLabel,
-  placeholder = "",
+  placeholder = '',
   isLoading = false,
   value,
   // mask,
@@ -28,7 +28,7 @@ export default function CustomPhoneTextField({
   // States
   // const [selectedCountryCode, setSelectedCountryCode] =
   //   useState<IDropdownSelectItem>();
-  const [, setPhone] = useState("");
+  const [, setPhone] = useState('');
 
   const handlePhoneInputChange = (phone: string) => {
     setPhone(phone);
@@ -44,18 +44,18 @@ export default function CustomPhoneTextField({
   //     : { width: '100%', borderRadius: '0 5px 5px 0', height: '40px' };
 
   const MaininputStyle =
-    page === "vendor-profile-edit"
+    page === 'vendor-profile-edit'
       ? {
-          width: "100%",
-          borderRadius: "0 5px 5px 0",
-          height: "40px",
-          borderColor: style?.borderColor || "",
+          width: '100%',
+          borderRadius: '0 5px 5px 0',
+          height: '40px',
+          borderColor: style?.borderColor || '',
         }
       : {
-          width: "100%",
-          borderRadius: "0 5px 5px 0",
-          height: "40px",
-          borderColor: style?.borderColor || "",
+          width: '100%',
+          borderRadius: '0 5px 5px 0',
+          height: '40px',
+          borderColor: style?.borderColor || '',
         };
 
   return !isLoading ? (
@@ -68,31 +68,31 @@ export default function CustomPhoneTextField({
       {/* <div style={style} className={`flex items-center ${className}`}> */}
       <div
         style={style}
-        className={`flex items-center ${className} ${style?.borderColor === "red" ? "phone-error" : ""} bg-white text-black dark:bg-gray-800 dark:text-white `}
+        className={`flex items-center ${className} ${style?.borderColor === 'red' ? 'phone-error' : ''} bg-white text-black dark:bg-gray-800 dark:text-white `}
       >
         <PhoneInput
-          country={"au"}
-          value={value ?? ""}
+          country={'au'}
+          value={value ?? ''}
           onChange={handlePhoneInputChange}
           disableSearchIcon={true}
           searchPlaceholder="Search country"
           inputStyle={{
             ...MaininputStyle,
             borderColor: style?.borderColor || MaininputStyle.borderColor,
-            backgroundColor: "white",
-            color: "#111827", // gray-900
+            backgroundColor: 'white',
+            color: '#111827', // gray-900
           }}
           buttonStyle={{
-            borderRight: "1px solid #ddd",
-            width: "40px",
-            backgroundColor: "white",
+            borderRight: '1px solid #ddd',
+            width: '40px',
+            backgroundColor: 'white',
           }}
           searchStyle={{
-            position: "relative",
-            width: "100%",
-            margin: "0",
-            padding: "5px",
-            borderRadius: "8px",
+            position: 'relative',
+            width: '100%',
+            margin: '0',
+            padding: '5px',
+            borderRadius: '8px',
           }}
           containerClass="custom-phone-input w-full"
         />
@@ -166,13 +166,13 @@ export default function CustomPhoneTextField({
             color: #111827 !important; /* gray-900 */
           }
 
-          html[dir="rtl"] .custom-phone-input .selected-flag {
+          html[dir='rtl'] .custom-phone-input .selected-flag {
             right: 0;
             left: auto !important;
             padding-right: 0.5rem; /* spacing so flag doesn’t touch border */
           }
           /* ✅ RTL Arrow Fix */
-          html[dir="rtl"] .custom-phone-input .selected-flag .arrow {
+          html[dir='rtl'] .custom-phone-input .selected-flag .arrow {
             right: 20px !important; /* place arrow inside the box */
             left: auto !important;
             display: block !important;

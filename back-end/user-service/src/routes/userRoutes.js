@@ -9,39 +9,30 @@ const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *               - role  
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               role:
- *                 type: string
- *                 enum: [user, merchant, admin]
- *                 default: user
- *               phone:
- *                 type: string
- *               address:
- *                 type: string
- *               storeName:
- *                 type: string
- *                 description: Required if role is merchant
- *               storeDescription:
- *                 type: string
- *               storeLocation:
- *                 type: string
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - name
+ *             - email
+ *             - password
+ *             - role
+ *           properties:
+ *             name:
+ *               type: string
+ *             email:
+ *               type: string
+ *             password:
+ *               type: string
+ *             role:
+ *               type: string
+ *               enum: [user, merchant, admin]
+ *               default: user
+ *             phone:
+ *               type: string
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -78,6 +69,25 @@ router.post('/register', userController.register);
  */
 router.post('/login', userController.login);
 
+/**
+ * @swagger
+ * /api/users/check-email:
+ *   get:
+ *     summary: Check if email exists
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         required: true
+ *         type: string
+ *         description: Email address to check
+ *     responses:
+ *       200:
+ *         description: Email check result
+ *       400:
+ *         description: Invalid input
+ */
+router.get('/check-email', userController.checkEmailExists);
 
 /**
  * @swagger

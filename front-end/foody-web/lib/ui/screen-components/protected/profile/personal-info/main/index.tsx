@@ -1,32 +1,25 @@
-"use client";
-import { GET_USER_PROFILE } from "@/lib/api/graphql";
-import ProfileDetailsSkeleton from "@/lib/ui/useable-components/custom-skeletons/profile.details.skelton";
-import TextComponent from "@/lib/ui/useable-components/text-field";
-import { getInitials } from "@/lib/utils/methods";
-import { useQuery } from "@apollo/client";
-import UpdatePhoneModal from "../../settings/main/update-phone";
-import { useState } from "react";
-import "primeicons/primeicons.css";
-import { useTranslations } from "next-intl";
+'use client';
+import ProfileDetailsSkeleton from '@/lib/ui/useable-components/custom-skeletons/profile.details.skelton';
+import TextComponent from '@/lib/ui/useable-components/text-field';
+import { getInitials } from '@/lib/utils/methods';
+import { useUserProfile } from '@/lib/api/restful/hooks/useUser';
+import UpdatePhoneModal from '../../settings/main/update-phone';
+import { useState } from 'react';
+import 'primeicons/primeicons.css';
+import { useTranslations } from 'next-intl';
 
 export default function PersonalInfoMain() {
-  const t = useTranslations()
-  const [isUpdatePhoneModalVisible, setIsUpdatePhoneModalVisible] =
-    useState<boolean>(false);
+  const t = useTranslations();
+  const [isUpdatePhoneModalVisible, setIsUpdatePhoneModalVisible] = useState<boolean>(false);
 
   // ActiveStep state variable
   const [activeStep, setActiveStep] = useState<number>(0);
 
-  // Get profile data by using the query
-  const { data: profileData, loading: profileLoading } = useQuery(
-    GET_USER_PROFILE,
-    {
-      fetchPolicy: "network-only",
-    }
-  );
+  // Get profile data using the useUserProfile hook
+  const { data: profileData, isLoading: profileLoading } = useUserProfile();
 
   // Get initials from the name
-  const initials = getInitials(profileData?.profile?.name);
+  const initials = getInitials(profileData?.name);
 
   const handleUpdatePhoneModal = () => {
     setActiveStep(0); // Reset active step to 0 when opening the modal
@@ -44,45 +37,46 @@ export default function PersonalInfoMain() {
             </div>
           </div>
           <TextComponent
-            text={profileData?.profile?.name || "N/A"}
+            text={profileData?.name || 'N/A'}
             className="md:text-xl text-lg font-semibold text-gray-900 dark:text-white"
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           <div>
             <TextComponent
-              text={t("Email")}
+              text={t('Email')}
               className="text-black dark:text-white font-semibold text-base md:text-lg"
             />
             <TextComponent
-              text={profileData?.profile?.email || "N/A"}
+              text={profileData?.email || 'N/A'}
               className="font-normal text-sm md:text-base text-gray-700 dark:text-gray-200"
             />
           </div>
           <div>
             <div className="flex items-center gap-2">
-
-            <TextComponent
-              text={t("Phone")}
-              className="text-black dark:text-gray-200 font-semibold text-base md:text-lg"
-            />
-             <i  onClick={handleUpdatePhoneModal} className="pi pi-pen-to-square cursor-pointer dark:text-white text-sm"></i>
+              <TextComponent
+                text={t('Phone')}
+                className="text-black dark:text-gray-200 font-semibold text-base md:text-lg"
+              />
+              <i
+                onClick={handleUpdatePhoneModal}
+                className="pi pi-pen-to-square cursor-pointer dark:text-white text-sm"
+              ></i>
             </div>
             <h1
               onClick={handleUpdatePhoneModal}
               title="Update phone number"
               className=" text-blue-700 dark:text-blue-400 font-normal text-sm md:text-base cursor-pointer"
-            >           
-              {profileData?.profile?.phone || "N/A"}
+            >
+              {profileData?.phone || 'N/A'}
             </h1>
           </div>
         </div>
         <UpdatePhoneModal
-          userPhone={profileData?.profile?.phone || ""}
+          userPhone={profileData?.phone || ''}
           handleUpdatePhoneModal={handleUpdatePhoneModal}
           ActiveStep={activeStep}
           setActiveStep={setActiveStep}
-          
           isUpdatePhoneModalVisible={isUpdatePhoneModalVisible}
         />
       </div>

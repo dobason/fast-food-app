@@ -6,13 +6,13 @@ WORKDIR /app
 # Install dependencies for better compatibility
 RUN apk add --no-cache libc6-compat
 
-# Copy package files
+# Copy package files first
 COPY package.json package-lock.json ./
 
-# Install all dependencies (including devDependencies for development)
-RUN npm install
+# Clean install dependencies (node_modules is excluded by .dockerignore)
+RUN npm ci || npm install
 
-# Copy application files
+# Copy application files (node_modules excluded by .dockerignore)
 COPY . .
 
 # Set development environment

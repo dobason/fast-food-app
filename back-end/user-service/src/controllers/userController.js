@@ -113,7 +113,7 @@ exports.getMerchantStore = async (req, res) => {
     try {
         // Tìm lại user trong DB để đảm bảo lấy thông tin mới nhất
         const user = await User.findById(req.user.id);
-        
+
         if (user.role !== 'merchant') {
             return res.status(403).json({ message: 'Access denied: not a merchant' });
         }
@@ -127,5 +127,46 @@ exports.getMerchantStore = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+// 6. Check if email exists
+exports.checkEmailExists = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        // Validate email input
+        if (!email) {
+            return res.status(400).json({
+                message: 'Email is required',
+                exists: false
+            });
+        }
+
+        // Check if email exists in database
+        const user = await User.findOne({ email });
+
+        if (user) {
+            return res.status(200).json({
+                message: 'Email already exists',
+                exists: true,
+                user: {
+                    name: user.name,
+                    role: user.role
+                }
+            });
+        }
+
+        res.status(200).json({
+            message: 'Email is available',
+            exists: false
+        });
+    } catch (error) {
+        console.error('Error checking email:', error.message);
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message,
+            exists: false
+        });
     }
 };
