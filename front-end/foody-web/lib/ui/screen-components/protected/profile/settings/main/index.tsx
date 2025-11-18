@@ -1,28 +1,28 @@
-"use client";
-import type React from "react";
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+'use client';
+import type React from 'react';
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 // Api
-import { DEACTIVATE_USER, GET_USER_PROFILE } from "@/lib/api/graphql";
-import { useMutation, useQuery, ApolloError } from "@apollo/client";
+import { DEACTIVATE_USER } from '@/lib/api/graphql';
+import { useMutation, ApolloError } from '@apollo/client';
+import { useUserProfile } from '@/lib/api/restful/hooks/useUser';
 
 // Components
-import CustomButton from "@/lib/ui/useable-components/button";
-import CustomInputSwitch from "@/lib/ui/useable-components/custom-input-switch";
-import ProfileSettingsSkeleton from "@/lib/ui/useable-components/custom-skeletons/profile.settings.skelton";
-import TextComponent from "@/lib/ui/useable-components/text-field";
-import DeleteAccountDialog from "./delete-account";
-import UpdatePhoneModal from "./update-phone";
+import CustomButton from '@/lib/ui/useable-components/button';
+import ProfileSettingsSkeleton from '@/lib/ui/useable-components/custom-skeletons/profile.settings.skelton';
+import TextComponent from '@/lib/ui/useable-components/text-field';
+import DeleteAccountDialog from './delete-account';
+import UpdatePhoneModal from './update-phone';
 // Context
-import { useAuth } from "@/lib/context/auth/auth.context";
+import { useAuth } from '@/lib/context/auth/auth.context';
 // Hooks
-import useToast from "@/lib/hooks/useToast";
-import NameUpdateModal from "./update-name";
-import { useTranslations } from "next-intl";
-import { Dialog } from "primereact/dialog";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import ThemeToggle from "@/lib/ui/useable-components/theme-button";
+import useToast from '@/lib/hooks/useToast';
+import NameUpdateModal from './update-name';
+import { useTranslations } from 'next-intl';
+import { Dialog } from 'primereact/dialog';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import ThemeToggle from '@/lib/ui/useable-components/theme-button';
 
 export default function SettingsMain() {
   // States for current values
@@ -30,14 +30,11 @@ export default function SettingsMain() {
   const [deleteAccount, setDeleteAccount] = useState<boolean>(false);
 
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [deleteReason, setDeleteReason] = useState<string>("");
-  const [logoutConfirmationVisible, setLogoutConfirmationVisible] =
-    useState(false);
+  const [deleteReason, setDeleteReason] = useState<string>('');
+  const [logoutConfirmationVisible, setLogoutConfirmationVisible] = useState(false);
 
-  const [isUpdatePhoneModalVisible, setIsUpdatePhoneModalVisible] =
-    useState<boolean>(false);
-  const [isUpdateNameModalVisible, setIsUpdateNameModalVisible] =
-    useState<boolean>(false);
+  const [isUpdatePhoneModalVisible, setIsUpdatePhoneModalVisible] = useState<boolean>(false);
+  const [isUpdateNameModalVisible, setIsUpdateNameModalVisible] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
 
   // Hooks
@@ -47,27 +44,22 @@ export default function SettingsMain() {
   const t = useTranslations();
 
   // Queries and Mutations
-  // Get profile data by using the query
-  const { data: profileData, loading: isProfileLoading } = useQuery(
-    GET_USER_PROFILE,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  // Get profile data using the useUserProfile hook
+  const { data: profileData, isLoading: isProfileLoading } = useUserProfile();
 
   // Update user muattion
   const [Deactivate] = useMutation(DEACTIVATE_USER, {
     onCompleted: () => {
       showToast({
-        type: "success",
-        title: t("successToastTitle"),
-        message: t("successToastMessage"),
+        type: 'success',
+        title: t('successToastTitle'),
+        message: t('successToastMessage'),
       });
     },
     onError: (error) => {
       showToast({
-        type: "error",
-        title: "Error",
+        type: 'error',
+        title: 'Error',
         message: error.message,
       });
     },
@@ -88,64 +80,59 @@ export default function SettingsMain() {
   const handleLogout = () => {
     // Add your logout logic here
     // e.g., clear cookies, redirect to login page, etc.
-    setAuthToken("");
+    setAuthToken('');
     localStorage.clear();
     showToast({
-      type: "success",
-      title: t("logoutSuccessToastTitle"),
-      message: t("logoutSuccessToastMessage"),
+      type: 'success',
+      title: t('logoutSuccessToastTitle'),
+      message: t('logoutSuccessToastMessage'),
     });
-    router.push("/");
+    router.push('/');
   };
 
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
 
+    try {
+      const result = await Deactivate({
+        variables: {
+          isActive: false,
+          email: profileData?.email,
+        },
+      });
 
+      // Check if mutation returned data
+      if (result.data?.Deactivate) {
+        // Success: log out user
+        setAuthToken('');
+        localStorage.clear();
+        setDeleteAccount(false);
+        router.push('/');
 
-const handleConfirmDelete = async () => {
-  setIsDeleting(true);
-
-  try {
-    const result = await Deactivate({
-      variables: {
-        isActive: false,
-        email: profileData?.profile?.email,
-      },
-    });
-
-    // Check if mutation returned data
-    if (result.data?.Deactivate) {
-      // Success: log out user
-      setAuthToken("");
-      localStorage.clear();
-      setDeleteAccount(false);
-      router.push("/");
+        showToast({
+          type: 'success',
+          title: 'Success',
+          message: 'Your account has been deleted successfully',
+        });
+      }
+    } catch (err: unknown) {
+      // Handle unexpected errors
+      let errorMessage = 'Unable to delete account';
+      if (err instanceof ApolloError) {
+        errorMessage = err.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
 
       showToast({
-        type: "success",
-        title: "Success",
-        message: "Your account has been deleted successfully",
+        type: 'error',
+        title: 'Error',
+        message: errorMessage,
       });
+    } finally {
+      setIsDeleting(false);
     }
-  } catch (err: unknown) {
-    // Handle unexpected errors
-    let errorMessage = "Unable to delete account";
-    if (err instanceof ApolloError) {
-      errorMessage = err.message;
-    } else if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-
-    showToast({
-      type: "error",
-      title: "Error",
-      message: errorMessage,
-    });
-  } finally {
-    setIsDeleting(false);
-  }
-};
-
-  
+  };
 
   // Close delete dialog
   const handleCancelDelete = useCallback(() => {
@@ -169,11 +156,7 @@ const handleConfirmDelete = async () => {
         visible={deleteAccount}
         onHide={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        userName={
-          profileData?.profile?.name ||
-          profileData?.profile?.email?.split("@")[0] ||
-          "User"
-        }
+        userName={profileData?.name || profileData?.email?.split('@')[0] || 'User'}
         deleteReason={deleteReason}
         setDeleteReason={setDeleteReason}
         loading={isDeleting}
@@ -183,11 +166,11 @@ const handleConfirmDelete = async () => {
       <div className="py-4 border-b">
         <div className="flex justify-between items-center dark:border-gray-700">
           <TextComponent
-            text={t("emailLabel")}
+            text={t('emailLabel')}
             className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
           />
           <TextComponent
-            text={profileData?.profile?.email}
+            text={profileData?.email}
             className="font-medium text-gray-700 dark:text-gray-100  text-base md:text-lg "
           />
         </div>
@@ -197,24 +180,16 @@ const handleConfirmDelete = async () => {
       <div className="py-4 border-b dark:border-gray-700">
         <div className="flex justify-between items-center ">
           <TextComponent
-            text={t("mobileNumberLabel")}
+            text={t('mobileNumberLabel')}
             className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
           />
           <div className="flex flex-col md:flex-row items-center gap-2">
-            {!profileData?.profile?.phoneIsVerified && (
-              <CustomButton
-                onClick={handleUpdatePhoneModal}
-                label={t("notVerifiedButton")}
-                type="button"
-                className="text-sm md:text-md font-light bg-[#dd1515c5] hover:bg-[#dd1515ab] px-[16px] py-[8px] text-white"
-              />
-            )}
             <h1
-              title={t("updatePhoneTitle")}
+              title={t('updatePhoneTitle')}
               onClick={handleUpdatePhoneModal}
               className="font-medium text-blue-700 dark:text-blue-400 text-base md:text-lg  cursor-pointer"
             >
-              {profileData?.profile?.phone || "N/A"}
+              {profileData?.phone || 'N/A'}
             </h1>
           </div>
         </div>
@@ -224,45 +199,16 @@ const handleConfirmDelete = async () => {
       <div className="py-4 border-b dark:border-gray-700">
         <div className="flex justify-between items-center">
           <TextComponent
-            text={t("nameLabel")}
+            text={t('nameLabel')}
             className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
           />
           <h1
-            title={t("updateNameTitle")}
+            title={t('updateNameTitle')}
             onClick={handleUpdateNameModal}
             className="font-medium text-blue-700 dark:text-blue-400 text-base md:text-lg  cursor-pointer"
           >
-            {profileData?.profile?.name || "N/A"}
+            {profileData?.name || 'N/A'}
           </h1>
-        </div>
-      </div>
-
-      {/* Delete Account */}
-      <div className="py-4 border-b dark:border-gray-700">
-        <div className="flex justify-between items-center">
-          <TextComponent
-            text={t("deleteAccountLabel")}
-            className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
-          />
-          <CustomButton
-            label={t("deleteButton")}
-            className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 font-medium text-base md:text-lg  "
-            onClick={handleDeleteAccount}
-          />
-        </div>
-      </div>
-
-      {/* Send Receipts */}
-      <div className="py-4 border-b dark:border-gray-700">
-        <div className="flex justify-between items-center">
-          <TextComponent
-            text={t("sendReceiptsLabel")}
-            className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
-          />
-          <CustomInputSwitch
-            isActive={sendReceipts}
-            onChange={handleSendReceiptsChange}
-          />
         </div>
       </div>
 
@@ -270,7 +216,7 @@ const handleConfirmDelete = async () => {
       <div className="py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-center">
           <TextComponent
-            text={t("theme")}
+            text={t('theme')}
             className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg"
           />
           <ThemeToggle />
@@ -283,27 +229,27 @@ const handleConfirmDelete = async () => {
         isUpdatePhoneModalVisible={isUpdatePhoneModalVisible}
         ActiveStep={activeStep}
         setActiveStep={setActiveStep}
-        userPhone={profileData?.profile?.phone || ""}
+        userPhone={profileData?.phone || ''}
       />
 
       {/* Upate Name MOdal */}
       <NameUpdateModal
         handleUpdateNameModal={handleUpdateNameModal}
         isUpdateNameModalVisible={isUpdateNameModalVisible}
-        existedName={profileData?.profile?.name}
+        existedName={profileData?.name || ''}
       />
 
       {/* Logout */}
       <div className="py-4">
         <div className="flex justify-between items-center">
           <TextComponent
-            text={t("logoutLabel")}
+            text={t('logoutLabel')}
             className="font-normal text-gray-700 dark:text-gray-300 text-base md:text-lg "
           />
           <CustomButton
             className="font-light text-gray-700 dark:text-gray-200 text-base lg:text-lg hover:text-gray-500"
             onClick={() => setLogoutConfirmationVisible(true)}
-            label={t("logoutButton")}
+            label={t('logoutButton')}
           />
         </div>
 

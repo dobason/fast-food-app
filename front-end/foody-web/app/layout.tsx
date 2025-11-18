@@ -1,5 +1,6 @@
 import { DirectionProvider } from '@/lib/context/direction/DirectionContext';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
+import { QueryProvider } from '@/lib/providers/QueryProvider';
 import { DirectionHandler } from '@/lib/ui/layouts/global/rtl/DirectionHandler';
 // import InstallPWA from "@/lib/ui/pwa/InstallPWA";
 import { NextIntlClientProvider } from 'next-intl';
@@ -71,15 +72,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Add more media queries for other device sizes if needed */}
       </head>
       <body className={dir === 'rtl' ? 'rtl' : ''}>
-        <ThemeProvider>
-          <NextIntlClientProvider messages={messages}>
-            <DirectionProvider dir={dir}>
-              <DirectionHandler />
-              {children}
-              {/* <InstallPWA/> */}
-            </DirectionProvider>
-          </NextIntlClientProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <NextIntlClientProvider messages={messages}>
+              <DirectionProvider dir={dir}>
+                <DirectionHandler />
+                {children}
+                {/* <InstallPWA/> */}
+              </DirectionProvider>
+            </NextIntlClientProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

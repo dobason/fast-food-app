@@ -6,7 +6,8 @@ const bcrypt = require('bcryptjs');
 mongoose.connect(process.env.MONGO_URL)
   .then(async () => {
     console.log('Connected to MongoDB for seeding');
-
+    console.log(process.env.MONGO_URL);
+    
     const sample = [
       {
         name: 'Admin User',

@@ -1,13 +1,10 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
-import { ORDERS } from "@/lib/api/graphql/queries/orders";
-import {
-  ActiveOrders,
-  PastOrders,
-} from "@/lib/ui/screen-components/protected/profile";
-import { ACTIVE_STATUS, INACTIVE_STATUS } from "@/lib/utils/constants/orders";
-import { IOrder } from "@/lib/utils/interfaces/orders.interface";
+'use client';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import { ORDERS } from '@/lib/api/graphql/queries/orders';
+import { ActiveOrders } from '@/lib/ui/screen-components/protected/profile';
+import { ACTIVE_STATUS, INACTIVE_STATUS } from '@/lib/utils/constants/orders';
+import { IOrder } from '@/lib/utils/interfaces/orders.interface';
 
 export default function OrderHistoryScreen() {
   const [page, setPage] = useState(1);
@@ -17,7 +14,7 @@ export default function OrderHistoryScreen() {
 
   const { data, loading, fetchMore, networkStatus } = useQuery(ORDERS, {
     variables: { page, limit },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   });
 
@@ -37,12 +34,8 @@ export default function OrderHistoryScreen() {
     }
   }, [data]);
 
-  const activeOrders = allOrders.filter((o) =>
-    ACTIVE_STATUS.includes(o.orderStatus)
-  );
-  const pastOrders = allOrders.filter((o) =>
-    INACTIVE_STATUS.includes(o.orderStatus)
-  );
+  const activeOrders = allOrders.filter((o) => ACTIVE_STATUS.includes(o.orderStatus));
+  const pastOrders = allOrders.filter((o) => INACTIVE_STATUS.includes(o.orderStatus));
 
   const loadMore = () => {
     if (!hasMore) return;
@@ -60,12 +53,6 @@ export default function OrderHistoryScreen() {
       {/* Active Orders */}
       <ActiveOrders
         activeOrders={activeOrders}
-        isOrdersLoading={networkStatus === 1} // initial load only
-      />
-
-      {/* Past Orders */}
-      <PastOrders
-        pastOrders={pastOrders}
         isOrdersLoading={networkStatus === 1} // initial load only
       />
 

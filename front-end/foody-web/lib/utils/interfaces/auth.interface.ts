@@ -15,6 +15,7 @@ export interface IAuthFormData {
   email?: string;
   password?: string;
   phone?: string;
+  role?: 'user' | 'merchant' | 'admin';
   type?: "default" | "google";
 }
 export interface ILoginWithGoogleProps {

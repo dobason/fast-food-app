@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 // Core
@@ -14,6 +15,7 @@ import {
   IOwnerLoginDataResponse,
   ISignInForm,
 } from '@/lib/utils/interfaces/forms';
+import { useLogin } from '@/lib/api/restful/hooks/useUser';
 
 // Component
 import CustomButton from '@/lib/ui/useable-components/button';
@@ -37,9 +39,7 @@ import { onErrorMessageMatcher } from '@/lib/utils/methods/error';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 // GraphQL
-import { OWNER_LOGIN } from '@/lib/api/graphql';
 import { ToastContext } from '@/lib/context/global/toast.context';
-import { ApolloError, useMutation } from '@apollo/client';
 
 // Schema
 import { onUseLocalStorage } from '@/lib/utils/methods';
@@ -64,11 +64,7 @@ export default function LoginEmailPasswordMain() {
   const router = useRouter();
   const { setUser } = useUserContext();
 
-  // API
-  const [onLogin, { loading }] = useMutation(OWNER_LOGIN, {
-    onError,
-    onCompleted,
-  });
+  const { mutate: login, isPending: isLoading } = useLogin();
 
   // API Handlers
   function onCompleted({ ownerLogin }: IOwnerLoginDataResponse) {
@@ -94,56 +90,35 @@ export default function LoginEmailPasswordMain() {
       message: 'User has been logged in successfully.',
     });
   }
-  function onError({ graphQLErrors, networkError }: ApolloError) {
-    showToast({
-      type: 'error',
-      title: 'Login',
-      message:
-        graphQLErrors[0]?.message ??
-        networkError?.message ??
-        `Something went wrong. Please try again`,
-    });
-  }
 
   // Handler
   const onSubmitHandler = async (data: ISignInForm) => {
-    // Toggle between mock and real data
-    const USE_MOCK_DATA = true;
+    // Login using the useLogin mutation
+    login(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: (res) => {
+          // Update user context with returned user data
+          if (res.token) {
+            setUser(res?.user as any);
+          }
 
-    if (USE_MOCK_DATA) {
-      // Use mock data for testing
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Get mock data based on email
-        const mockResponse = getMockLoginByEmail(data.email);
-
-        // Call onCompleted with mock data
-        onCompleted(mockResponse);
-      } catch (err) {
-        showToast({
-          type: 'error',
-          title: 'Login',
-          message: 'Mock Login Failed',
-        });
+          // Get mock data based on email
+          const mockResponse = getMockLoginByEmail(data.email);
+          onCompleted(mockResponse);
+        },
+        onError: (error) => {
+          showToast({
+            type: 'error',
+            title: 'Login',
+            message: 'Login Failed',
+          });
+        },
       }
-    } else {
-      // Use real API
-      try {
-        await onLogin({
-          variables: {
-            ...data,
-          },
-        });
-      } catch (err) {
-        showToast({
-          type: 'error',
-          title: 'Login',
-          message: 'Login Failed',
-        });
-      }
-    }
+    );
   };
 
   return (
@@ -224,7 +199,7 @@ export default function LoginEmailPasswordMain() {
                         className="hover-border-black h-10 w-full border border-black bg-[#18181B] px-32 text-white hover:bg-white hover:text-black"
                         label="Login"
                         type="submit"
-                        loading={loading}
+                        loading={isLoading}
                       />
                     </Form>
                   );
