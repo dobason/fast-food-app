@@ -1,12 +1,26 @@
-const User = require('../models/User'); //Mongoose model người dùng
-const bcrypt = require('bcryptjs'); //Thư viện băm mật khẩu
-const jwt = require('jsonwebtoken'); //Thư viện tạo JSON Web Token
+const User = require('../models/User'); 
+const bcrypt = require('bcryptjs'); 
+const jwt = require('jsonwebtoken'); 
 
-// 1. Đăng ký người dùng mới
+// 1. Đăng ký người dùng mới (Hỗ trợ Merchant và Admin)
 exports.register = async (req, res) => {
     try {
-        // Đã thêm phone và address vào đây
         const { name, email, password, role, phone, address, storeName, storeDescription, storeLocation } = req.body;
+
+        // Kiểm tra xem email đã tồn tại chưa
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+
+        // Nếu role là merchant thì bắt buộc phải có tên cửa hàng
+        if (role === 'merchant') {
+            if (!storeName || !storeLocation) {
+                return res.status(400).json({ 
+                    message: 'Merchant must provide storeName and storeLocation' 
+                });
+            }
+        }
 
         const hashed = await bcrypt.hash(password, 10);
         
@@ -14,15 +28,25 @@ exports.register = async (req, res) => {
             name,
             email,
             password: hashed,
-            role,
-            phone,    // Đã thêm
-            address,  // Đã thêm
-            storeName,
-            storeDescription,
-            storeLocation
+            role: role || 'user', // Mặc định là user nếu không truyền role
+            phone,
+            address,
+            // Lưu thông tin merchant nếu có
+            storeName: role === 'merchant' ? storeName : undefined,
+            storeDescription: role === 'merchant' ? storeDescription : undefined,
+            storeLocation: role === 'merchant' ? storeLocation : undefined
         });
+
         await newUser.save();
-        res.status(201).json({ message: 'User registered successfully', user: newUser });
+
+        // Trả về thông tin user (ẩn password)
+        const userResponse = newUser.toObject();
+        delete userResponse.password;
+
+        res.status(201).json({ 
+            message: 'User registered successfully', 
+            user: userResponse 
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -38,43 +62,70 @@ exports.login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){ return res.status(400).json({ message: 'Invalid credentials' }); }
 
-        // === QUAN TRỌNG: Đưa ROLE vào Token ===
+        // Đưa ROLE vào Token để middleware xử lý phân quyền
         const token = jwt.sign(
             { id: user._id, role: user.role }, 
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' } // Token hết hạn sau 1 ngày
         );
         
-        res.json({ token });
+        res.json({ 
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
 
-// 3. Lấy thông tin người dùng (Hàm này bị thiếu trong code của bạn, cần thêm lại)
+// 3. Lấy thông tin người dùng hiện tại
 exports.profile = async (req, res) => {
     try {
+        // req.user được lấy từ authMiddleware
         const user = await User.findById(req.user.id).select('-password'); 
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
         res.json(user);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
 
-// 4. Admin: xem danh sách user
+// 4. Admin: xem danh sách tất cả user
 exports.getAllUsers = async (req, res) => {
-    const users = await User.find().select('-password'); 
-    res.json(users);
+    try {
+        const users = await User.find().select('-password'); 
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 }
 
 // 5. Merchant: xem thông tin cửa hàng của mình
 exports.getMerchantStore = async (req, res) => {
-    if (req.user.role !== 'merchant') {
-        return res.status(403).json({ message: 'Access denied: not a merchant' });
+    try {
+        // Tìm lại user trong DB để đảm bảo lấy thông tin mới nhất
+        const user = await User.findById(req.user.id);
+        
+        if (user.role !== 'merchant') {
+            return res.status(403).json({ message: 'Access denied: not a merchant' });
+        }
+
+        res.json({
+            storeName: user.storeName,
+            storeDescription: user.storeDescription,
+            storeLocation: user.storeLocation,
+            ownerName: user.name,
+            contactPhone: user.phone
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    res.json({
-        storeName: req.user.storeName,
-        storeDescription: req.user.storeDescription,
-        storeLocation: req.user.storeLocation
-    });
 };

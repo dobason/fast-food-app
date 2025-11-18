@@ -7,16 +7,21 @@ const productSchema = new Schema({
     productId: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        parse: true
     },
     name: {
         type: String,
-        required: true
+        required: [true, 'Tên sản phẩm là bắt buộc']
     },
-    description: String,
+    description:{
+        type: String,
+        default: ''
+    }, 
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     quantity: {
         type: Number,
@@ -30,7 +35,8 @@ const productSchema = new Schema({
     storeId: {
         type: Schema.Types.ObjectId,
         ref: 'Store',
-        required: true
+        required: true,
+        index: true
     },
     images: [String]
 }, {

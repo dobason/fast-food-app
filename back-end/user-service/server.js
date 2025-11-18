@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerOptions = require('./swagger');
+require('dotenv').config();
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 

@@ -3,30 +3,45 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware');
 
-
 /**
  * @swagger
  * /api/users/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           type: object
- *           required:
- *             - name
- *             - email
- *             - password
- *           properties:
- *             name:
- *               type: string
- *             email:
- *               type: string
- *             password:
- *               type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - role  
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [user, merchant, admin]
+ *                 default: user
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               storeName:
+ *                 type: string
+ *                 description: Required if role is merchant
+ *               storeDescription:
+ *                 type: string
+ *               storeLocation:
+ *                 type: string
  *     responses:
  *       201:
  *         description: User registered successfully

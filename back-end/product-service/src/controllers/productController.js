@@ -16,8 +16,9 @@ exports.createProduct = async (req, res) => {
 
         await newProduct.save(); //Lưu sản phẩm vào DB
         res.status(201).json({ message: 'Product created successfully', product: newProduct });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error'});
+        } catch (error) {
+        // Phải có error.message ở đây
+        res.status(500).json({ message: 'Server error', error: error.message }); 
     }
 };
 
