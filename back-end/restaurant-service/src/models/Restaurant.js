@@ -1,19 +1,41 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const storeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  address: { type: String, required: true },
-  ownerId: { type: String, required: true }, 
-
-  // Tọa độ để Drone giao hàng (Quan trọng cho yêu cầu mới)
-  location: {
-    lat: { type: Number, required: true },
-    lng: { type: Number, required: true }
+const restaurantSchema = new mongoose.Schema({
+  storeName: {
+    type: String,
+    required: true,
+    trim: true
   },
-  
-  imageUrl: { type: String },
-  isOpen: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now }
+  storeDescription: {
+    type: String,
+    trim: true
+  },
+  storeLocation: {
+    type: String,
+    required: true
+  },
+  // Mảng các String (URL ảnh)
+  logo: {
+    type: [String],
+    default: []
+  },
+  // Vĩ độ (Latitude)
+  start_lat: {
+    type: Number,
+    required: true
+  },
+  // Kinh độ (Longitude)
+  start_lng: {
+    type: Number,
+    required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model('Store', storeSchema);
+module.exports = mongoose.model('Restaurant', restaurantSchema);

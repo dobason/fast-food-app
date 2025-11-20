@@ -129,7 +129,7 @@ r/**
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', createDelivery);
+router.post('/', deliveryController.createDelivery);
 
 /**
  * @swagger
@@ -184,7 +184,7 @@ router.post('/', createDelivery);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/', getAllDeliveries);
+router.get('/', deliveryController.getAllDeliveries);
 
 /**
  * @swagger
@@ -219,7 +219,7 @@ router.get('/', getAllDeliveries);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', getDeliveryById);
+router.get('/:id', deliveryController.getDeliveryById);
 
 /**
  * @swagger
@@ -286,7 +286,7 @@ router.get('/:id', getDeliveryById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put('/:id', updateDelivery);
+router.put('/:id', deliveryController.updateDelivery);
 
 /**
  * @swagger
@@ -325,6 +325,6 @@ router.put('/:id', updateDelivery);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete('/:id', deleteDelivery);
+router.delete('/:id', deliveryController.deleteDelivery);
 
 module.exports = router;

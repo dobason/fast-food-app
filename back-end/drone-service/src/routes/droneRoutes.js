@@ -80,7 +80,7 @@ const droneController = require('../controllers/droneController');
  *              items:
  *                $ref: '#/components/schemas/Drone'
  */
-router.get('/', getAllDrones);
+router.get('/', droneController.getAllDrones);
 
 /**
  * @swagger
@@ -104,7 +104,7 @@ router.get('/', getAllDrones);
  *      404:
  *        description: Không tìm thấy Drone
  */
-router.get('/:id', getDroneById);
+router.get('/:id', droneController.getDroneById);
 
 /**
  * @swagger
@@ -124,7 +124,7 @@ router.get('/:id', getDroneById);
  *      400:
  *        description: Dữ liệu không hợp lệ
  */
-router.post('/', createDrone);
+router.post('/', droneController.createDrone);
 
 /**
  * @swagger
@@ -150,7 +150,7 @@ router.post('/', createDrone);
  *      404:
  *        description: Không tìm thấy Drone
  */
-router.put('/:id', updateDrone);
+router.put('/:id', droneController.updateDrone);
 
 /**
  * @swagger
@@ -170,6 +170,6 @@ router.put('/:id', updateDrone);
  *      404:
  *        description: Không tìm thấy Drone
  */
-router.delete('/:id', deleteDrone);
+router.delete('/:id', droneController.deleteDrone);
 
 module.exports = router;
