@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const mongoose = require('mongoose');
-
 const droneSchema = new mongoose.Schema({
   droneId: {
     type: String,

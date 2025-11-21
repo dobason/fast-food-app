@@ -10,62 +10,6 @@ const {
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Restaurant:
- *       type: object
- *       required:
- *         - storeName
- *         - storeLocation
- *         - start_lat
- *         - start_lng
- *       properties:
- *         id:
- *           type: string
- *           description: Auto-generated ID
- *         storeName:
- *           type: string
- *           description: Tên nhà hàng
- *         storeDescription:
- *           type: string
- *           description: Mô tả về nhà hàng
- *         storeLocation:
- *           type: string
- *           description: Địa chỉ hiển thị dạng text
- *         logo:
- *           type: array
- *           items:
- *             type: string
- *           description: Danh sách URL logo/hình ảnh
- *         start_lat:
- *           type: number
- *           format: double
- *           description: Vĩ độ (Latitude)
- *         start_lng:
- *           type: number
- *           format: double
- *           description: Kinh độ (Longitude)
- *         isActive:
- *           type: boolean
- *           description: Trạng thái hoạt động
- *       example:
- *         storeName: "Foody Gò Vấp"
- *         storeDescription: "Cơm tấm sườn bì chả ngon nhất vùng"
- *         storeLocation: "123 Phạm Văn Đồng, Gò Vấp, TP.HCM"
- *         logo: ["https://example.com/logo1.png", "https://example.com/logo2.png"]
- *         start_lat: 10.823099
- *         start_lng: 106.629664
- */
-
-/**
- * @swagger
- * tags:
- *   name: Restaurants
- *   description: API quản lý nhà hàng
- */
-
-/**
- * @swagger
  * /api/restaurants:
  *   get:
  *     summary: Lấy danh sách tất cả nhà hàng

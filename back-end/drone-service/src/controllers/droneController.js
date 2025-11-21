@@ -1,4 +1,4 @@
-const Drone = require('../models/droneModel');
+const Drone = require('../models/Drone');
 
 // Tạo một drone mới
 exports.createDrone = async (req, res) => {
