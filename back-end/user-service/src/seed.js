@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 
+
 mongoose.connect(process.env.MONGO_URL)
   .then(async () => {
     console.log('Connected to MongoDB for seeding');

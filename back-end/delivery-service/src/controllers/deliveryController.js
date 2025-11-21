@@ -1,4 +1,4 @@
-const Delivery = require('../models/Delivery');
+const delivery = require('../models/Delivery');
 
 // Tạo một đơn giao hàng mới
 exports.createDelivery = async (req, res) => {
@@ -10,7 +10,7 @@ exports.createDelivery = async (req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        const newDelivery = new Delivery({
+        const newDelivery = new delivery({
             droneId,
             orderId,
             dest_lat,
@@ -26,11 +26,11 @@ exports.createDelivery = async (req, res) => {
     }
 };
 
-// Lấy tat ca thông tin đơn giao hàng
+// Lấy tat ca thông tin đơn giao hàng 
 exports.getAllDeliveries = async (req, res) => {
     try{
-        const deliveries = await Delivery.find();
-        res.status(200).json(deliveries);
+        const deliveries = await delivery.find();
+        res.status(200).json(deliveries); 
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
@@ -50,19 +50,19 @@ exports.getDeliveryById = async (req, res) => {
 };
 
 // Cập nhật trạng thái đơn giao hàng
-exports.updateDelivery = async (req, res) => {
+exports.updateDeliveryStatus = async (req, res) => {
     try {
-        const updatedDelivery = await Delivery.findByIdAndUpdate(
+        const updateDelivery = await Delivery.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true } // Trả về dữ liệu mới
         );
 
-        if (!updatedDelivery) {
+        if (!updateDelivery) {
             return res.status(404).json({ message: 'Delivery not found' });
         }
 
-        res.status(200).json(updatedDelivery);
+        res.status(200).json(updateDelivery);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
@@ -71,9 +71,9 @@ exports.updateDelivery = async (req, res) => {
 // Xóa đơn giao hàng
 exports.deleteDelivery = async (req, res) => {
     try {
-        const deletedDelivery = await Delivery.findByIdAndDelete(req.params.id);
+        const delivery = await Delivery.findByIdAndDelete(req.params.id);
 
-        if (!deletedDelivery) {
+        if (!delivery) {
             return res.status(404).json({ message: 'Delivery not found' });
         }
 

@@ -86,26 +86,6 @@ services:
     command: ["sh", "./start.sh"]
     networks:
       - app-network
-  
-  restaurant-service:
-    build:
-      context: ./back-end/restaurant-service
-    container_name: restaurant-service
-    ports:
-      - "5005:5005"
-    volumes:
-      - ./back-end/restaurant-service:/app
-      - /app/node_modules
-    depends_on:
-      - mongodb
-    env_file:
-      - ./back-end/restaurant-service/.env
-    environment:
-      - NODE_ENV=development
-    command: ["sh", "./start.sh"]
-    networks:
-      - app-network
-
     
   delivery-service:
     build:

@@ -2,6 +2,71 @@ const express = require('express');
 const router = express.Router();
 const deliveryController = require('../controllers/deliveryController');
 
+// Định nghĩa các route
+r/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Delivery:
+ *      type: object
+ *      required:
+ *        - droneId
+ *        - orderId
+ *        - dest_lat
+ *        - dest_lng
+ *        - start_lat
+ *        - start_lng
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: ID tự động tạo của MongoDB
+ *        droneId:
+ *          type: string
+ *          description: ID của Drone thực hiện giao hàng
+ *        orderId:
+ *          type: string
+ *          description: ID của đơn hàng được giao
+ *        dest_lat:
+ *          type: number
+ *          format: double
+ *          description: Vĩ độ điểm đến (Destination Latitude)
+ *        dest_lng:
+ *          type: number
+ *          format: double
+ *          description: Kinh độ điểm đến (Destination Longitude)
+ *        start_lat:
+ *          type: number
+ *          format: double
+ *          description: Vĩ độ điểm bắt đầu (Start Latitude)
+ *        start_lng:
+ *          type: number
+ *          format: double
+ *          description: Kinh độ điểm bắt đầu (Start Longitude)
+ *        status:
+ *          type: string
+ *          enum: [PENDING, IN_TRANSIT, DELIVERED, CANCELLED]
+ *          description: Trạng thái của chuyến giao hàng
+ *        createdAt:
+ *          type: string
+ *          format: date-time
+ *          description: Thời gian tạo
+ *      example:
+ *        droneId: "drone-123"
+ *        orderId: "order-456"
+ *        dest_lat: 10.762622
+ *        dest_lng: 106.660172
+ *        start_lat: 10.823099
+ *        start_lng: 106.629664
+ *        status: "PENDING"
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Deliveries
+ *   description: API quản lý giao hàng
+ */
+
 /**
  * @swagger
  * /api/deliveries:
