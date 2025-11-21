@@ -86,6 +86,64 @@ services:
     command: ["sh", "./start.sh"]
     networks:
       - app-network
+  
+  restaurant-service:
+    build:
+      context: ./back-end/restaurant-service
+    container_name: restaurant-service
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./back-end/restaurant-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/restaurant-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+    
+  delivery-service:
+    build:
+      context: ./back-end/delivery-service
+    container_name: delivery-service
+    ports:
+      - "5006:5006"
+    volumes:
+      - ./back-end/delivery-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/delivery-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
+
+  drone-service:
+    build:
+      context: ./back-end/drone-service
+    container_name: drone-service
+    ports:
+      - "5007:5007"
+    volumes:
+      - ./back-end/drone-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    env_file:
+      - ./back-end/drone-service/.env
+    environment:
+      - NODE_ENV=development
+    command: ["sh", "./start.sh"]
+    networks:
+      - app-network
 
   foody-web:
     build:
