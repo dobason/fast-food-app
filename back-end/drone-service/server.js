@@ -19,7 +19,7 @@ app.use(express.json());
 // Swagger UI route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-const deliveryRoutes = require('./src/routes/droneRoutes');
+const droneRoutes = require('./src/routes/droneRoutes');
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("Connected to MongoDB - Drone Service"))
